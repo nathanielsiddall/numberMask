@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>number Mask</title>
+</head>
+<body>
+<select id="countryCode">
+    <option value="null">Select an option</option>
+</select>
+<input type="text" id="input">
+<p id="output"></p>
+
+<script type="text/javascript">
+    /*
+    * figure out why the 'inputArray[arrayPoint]' is returning uindefined. and why the raw numbewrs are filling corectly, but are not skipping the format chars.
+    *
+    * */
+
+    const id = (id)=>{return document.getElementById(id)};
+    const loadOptions = ()=>{
+        dataSet.forEach((country)=>{countryCode.innerHTML += `<option value="${country.code}">${country.name}</option>`;});
+    };
+    const getSelectedCountry = (countryCode, data)=>{
+
+        for (let i = 0; i <= data.length; i++){
+
+            if (countryCode === data[i].code){
+                selectedCountry.code = data[i].code;
+                selectedCountry.abbr = data[i].abbr;
+                selectedCountry.name = data[i].name;
+                selectedCountry.format = data[i].formatting;
+                break;
+            }
+        }
+        return selectedCountry;
+    };
+    const updateInputText = (format, inputtedNumbers)=>{
+        let formatArray = [];
+        let outputArray = [];
+        let output = '';
+        let outputPoint
+        let arrayPoint = 0;
+        console.log("inputtedNumber: " + inputtedNumbers);
+
+
+        if (inputtedNumbers){
+            let inputArray = inputtedNumbers.split();
+            console.log('inputArray: ' + inputArray);
+
+            formatArray = format.split('0');
+            console.log('formatArray: ' + formatArray);
+
+            formatArray.forEach((digit)=>{
+                if (digit !== undefined){
+                    outputArray.push(...digit);
+                } else {
+                    outputArray.push(...inputArray[arrayPoint]);
+                    arrayPoint++;
+                }
+
+
+            });
+
+
+            outputArray.forEach((digit)=>{
+                output += digit;
+            })
+
+
+
+        }else {
+            formatArray = format.split('');
+            formatArray.forEach((digit)=> {
+
+                if (digit === '0') {
+                    output += '';
+                }else if (digit === '%'){
+                    output += ' ';
+                }
+                else {
+                    output += digit;
+                }
+            });
+        }
+
+
+        console.log('output: ' + output);
+        return output;
+
+    };
+
+
+
+
+    let input = id('input');
+    let countryCode = id('countryCode');
+    let output = id('output');
+
+    let dataSet = [
+        {
+            code: '0',
+            abbr: 'USA',
+            name: 'United States',
+            formatting: `(000)000-0000`
+        },
+        {
+            code: '1',
+            abbr: 'UK',
+            name: 'United Kingdom',
+            formatting: `000%0000%0000`
+        },
+        {
+            code: '2',
+            abbr: 'AUS',
+            name: 'Kangarooland',
+            formatting: `(00)%0000%0000`
+        },
+        {
+            code: '3',
+            abbr: 'HEL',
+            name: 'Hell',
+            formatting: `your00000workflow(00000)t0i0c0k0e0t%%%%failed0000000000`
+        }
+
+    ];
+    let selectedCountry = {};
+
+    countryCode.onchange = ()=>{
+        selectedCountry = getSelectedCountry(countryCode.value, dataSet);
+        input.value = updateInputText(selectedCountry.format);
+    };
+
+    let inputRawValue = '';
+    input.onkeyup  = ()=>{
+        inputRawValue = input.value.replace(/\D/g,'');
+        console.log('raw input value: ' +  inputRawValue);
+        console.log('function output: ' + updateInputText(selectedCountry.format, inputRawValue));
+
+    };
+
+
+
+
+    loadOptions();
+</script>
+
+
+
+</body>
+</html>
